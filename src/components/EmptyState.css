@@ -1,0 +1,92 @@
+.empty-state {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-illustration {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-orb {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);
+  animation: orb-idle 3s ease-in-out infinite;
+}
+
+@keyframes orb-idle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.empty-emoji {
+  font-size: 44px;
+  position: relative;
+  z-index: 1;
+}
+
+.empty-heading {
+  font-family: "Syne", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 12px;
+}
+
+.empty-body {
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.7;
+  margin: 0 0 36px;
+}
+
+.empty-body strong {
+  color: #94a3b8;
+}
+
+.empty-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.empty-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.empty-step span {
+  width: 24px;
+  height: 24px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b4fc;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.empty-arrow {
+  color: #334155;
+  font-size: 14px;
+}

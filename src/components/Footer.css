@@ -1,0 +1,11 @@
+.footer {
+  text-align: center;
+  padding: 28px 20px 40px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  color: #334155;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+.footer strong { color: #475569; }
