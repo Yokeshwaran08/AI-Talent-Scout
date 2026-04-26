@@ -136,6 +136,52 @@ AI Talent Scout automates the workflow by:
 
 ---
 
+📸 Screenshots
+
+🏠 Input & Validation
+
+Paste a job description and get instant feedback on its quality.
+
+Detects invalid or low-quality JDs
+Shows confidence warnings before processing
+![JD Screening](./screenshots/JDresults.png)
+
+⚠️ Garbage / Invalid JD Handling
+
+Prevents misleading results when JD lacks meaningful data.
+![Invalid JD](./screenshots/invalidJD.png)
+![Partial JD](./screenshots/partialJD.png)
+
+🎯 Ranked Candidate Results
+
+Clean, structured cards showing match score, interest level, and explanations.
+![Candidate's Result](./screenshots/results.png)
+
+🧠 Explainability & Insights
+
+Each candidate includes reasoning:
+
+Why were they selected
+Interest simulation explanation
+![Insight and Explainability](./screenshots/insights.png)
+
+🔍 Sorting & Filtering
+
+Recruiters can:
+
+Sort by rank, match score, or interest
+Filter candidates by interest level
+![Sorting and Filtering](./screenshots/sorting.png)
+
+⏳ Processing Flow
+
+Step-by-step loading state showing pipeline progress.
+
+![Flow](./screenshots/flow.png)
+
+
+---
+
 ## 🏗️ Architecture
 
 ```plaintext
