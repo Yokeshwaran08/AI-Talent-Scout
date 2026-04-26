@@ -20,9 +20,9 @@ export default function ResultsSection({ candidates, jdParsed }) {
   );
 
   const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === "rank") return b.rankScore - a.rankScore;
-    if (sortBy === "match") return b.matchScore - a.matchScore;
-    if (sortBy === "interest") return b.interestScore - a.interestScore;
+    if (sortBy === "rank") return (b.rankScore ?? 0) - (a.rankScore ?? 0);
+    if (sortBy === "match") return (b.matchScore ?? 0) - (a.matchScore ?? 0);
+    if (sortBy === "interest") return (b.interestScore ?? 0) - (a.interestScore ?? 0);
     return 0;
   });
 
@@ -55,7 +55,7 @@ export default function ResultsSection({ candidates, jdParsed }) {
               <button
                 key={opt.value}
                 className={`sort-btn ${sortBy === opt.value ? "active" : ""}`}
-                onClick={() => setSortBy(opt.value)}
+                onClick={() => { setSortBy(opt.value); setShowCount(10); }}
               >
                 {opt.label}
               </button>
@@ -67,7 +67,7 @@ export default function ResultsSection({ candidates, jdParsed }) {
           <select
             className="filter-select"
             value={filterInterest}
-            onChange={(e) => setFilterInterest(e.target.value)}
+            onChange={(e) => { setFilterInterest(e.target.value); setShowCount(10); }}
           >
             {INTEREST_FILTER.map((f) => (
               <option key={f} value={f}>{f}</option>
@@ -79,10 +79,17 @@ export default function ResultsSection({ candidates, jdParsed }) {
       {/* Stats row */}
       <div className="stats-row">
         {["High", "Medium-High", "Medium", "Low"].map((level) => {
-          const count = candidates.filter((c) => c.interestLevel === level || (level === "Low" && ["Low","Medium-Low"].includes(c.interestLevel))).length;
+          const count = candidates.filter((c) =>
+            c.interestLevel === level ||
+            (level === "Low" && ["Low", "Medium-Low"].includes(c.interestLevel))
+          ).length;
           const colors = { High: "#22c55e", "Medium-High": "#84cc16", Medium: "#f59e0b", Low: "#ef4444" };
           return (
-            <div key={level} className="stat-chip" style={{ borderColor: `${colors[level]}33`, background: `${colors[level]}0d` }}>
+            <div
+              key={level}
+              className="stat-chip"
+              style={{ borderColor: `${colors[level]}33`, background: `${colors[level]}0d` }}
+            >
               <span style={{ color: colors[level] }}>{count}</span>
               <span className="stat-label">{level}</span>
             </div>
@@ -94,12 +101,14 @@ export default function ResultsSection({ candidates, jdParsed }) {
       {visible.length === 0 && (
         <div className="empty-results">
           <p>😔 No candidates match the current filter.</p>
-          <button onClick={() => setFilterInterest("All")}>Clear Filter</button>
+          <button onClick={() => { setFilterInterest("All"); setShowCount(10); }}>
+            Clear Filter
+          </button>
         </div>
       )}
 
       {/* Cards */}
-      <div className="cards-list">
+      <div className="cards-list" key={sortBy + filterInterest}>
         {visible.map((candidate, i) => (
           <CandidateCard
             key={candidate.id}
