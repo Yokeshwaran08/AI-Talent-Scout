@@ -182,7 +182,7 @@ Filter candidates by interest level
 
 Step-by-step loading state showing pipeline progress.
 
-![Flow](./screenshots/flow.png)
+![Flow](./screenshots/Flow.png)
 
 
 ---
