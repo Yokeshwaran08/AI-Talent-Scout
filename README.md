@@ -189,8 +189,7 @@ Step-by-step loading state showing pipeline progress.
 
 ## 🏗️ Architecture
 
-```plaintext
-## 🏗️ Architecture
+
 
 ```plaintext
 +----------------------+
