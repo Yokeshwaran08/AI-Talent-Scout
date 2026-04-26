@@ -42,7 +42,7 @@ AI Talent Scout automates the workflow by:
 
 ---
 
-### ⚠️ Robust Input Validation (🔥 Differentiator)
+### ⚠️ Robust Input Validation 
 
 * Detects **garbage / low-quality JDs**
 * Prevents misleading results
@@ -83,7 +83,6 @@ AI Talent Scout automates the workflow by:
   * Interest Score
 * Top candidates highlighted with:
 
-  * 🏆 “Why #1?” insight
   * 💡 Recruiter insights
 
 ---
