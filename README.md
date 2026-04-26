@@ -190,20 +190,43 @@ Step-by-step loading state showing pipeline progress.
 ## 🏗️ Architecture
 
 ```plaintext
-User Input (JD)
-        ↓
-JD Parser (LLM)
-        ↓
-Validation Layer
-        ↓
-Matching Engine (JS)
-        ↓
-Interest Simulator (LLM + fallback)
-        ↓
-Ranking Engine
-        ↓
-UI (React)
+## 🏗️ Architecture
+
+```plaintext
++----------------------+
+|   User Input (JD)    |
++----------+-----------+
+           ↓
++----------------------+
+|   JD Parser (LLM)    |
++----------+-----------+
+           ↓
++----------------------+
+|  Validation Layer    |
++----------+-----------+
+           ↓
++----------------------+
+| Matching Engine (JS) |
++----------+-----------+
+           ↓
++-------------------------------+
+| Interest Simulator (LLM + FB) |
++----------+--------------------+
+           ↓
++----------------------+
+|  Ranking Engine      |
++----------+-----------+
+           ↓
++----------------------+
+|   UI (React App)     |
++----------------------+
 ```
+This architecture combines AI reasoning with deterministic logic:
+
+- LLM handles **understanding and simulation** (JD parsing, interest generation)
+- JavaScript handles **scoring and ranking** (fast, reliable, and explainable)
+- Validation ensures robustness against poor or noisy job descriptions
+- Fallback logic guarantees the system continues working even if AI fails
 
 ---
 
