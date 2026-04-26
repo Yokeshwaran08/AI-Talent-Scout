@@ -10,6 +10,11 @@ import Footer from "./components/Footer";
 import { runPipeline } from "./services/pipeline";
 import "./App.css";
 
+const FALLBACK_WARNING = {
+  message: "⚠️ AI response unavailable — showing estimated matches using fallback scoring logic. Results remain meaningful but may be less precise.",
+  tooltip: "Fallback mode uses rule-based scoring for skills, experience, and location when AI is unavailable.",
+};
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadStep, setLoadStep] = useState(0);
@@ -35,7 +40,7 @@ export default function App() {
       setJdParsed(parsedJD);
 
       if (report.usedFallback) {
-        setWarning("⚠️ Using fallback data due to API issue. Results may be estimated.");
+        setWarning(FALLBACK_WARNING);
       }
 
       if (!v.isValid) { setIsLoading(false); return; }
@@ -43,7 +48,7 @@ export default function App() {
       if (candidates.length === 0) setError("No strong matches found. Try adding more specific skills.");
     } catch (e) {
       console.warn("Pipeline error:", e.message);
-      setWarning("⚠️ Using fallback data due to API issue.");
+      setWarning(FALLBACK_WARNING);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -59,7 +64,14 @@ export default function App() {
 
         {(validation || warning) && !isLoading && (
           <div className="container-narrow">
-            {warning && <ErrorBanner message={warning} onDismiss={() => setWarning(null)} type="warning" />}
+            {warning && (
+              <ErrorBanner
+                message={warning.message}
+                tooltip={warning.tooltip}
+                onDismiss={() => setWarning(null)}
+                type="warning"
+              />
+            )}
             {validation && <JDValidationBanner validation={validation} />}
           </div>
         )}
