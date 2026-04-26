@@ -18,7 +18,7 @@ export function extractSkillsFromText(text) {
     "Git", "CI/CD", "Agile", "Scrum", "JIRA", "Webpack", "Vite", "Babel",
     "Jest", "Cypress", "Playwright", "Selenium", "Testing Library",
     "Machine Learning", "TensorFlow", "PyTorch", "NLP", "Computer Vision",
-    "SQL", "Kafka", "RabbitMQ", "Microservices", "GraphQL", "Apollo",
+    "SQL", "Kafka", "RabbitMQ", "Microservices", "Apollo",
     "Tailwind", "Bootstrap", "Material-UI", "Chakra UI", "Figma",
     "React Native", "Flutter", "Swift", "Kotlin", "Android", "iOS",
     "Storybook", "D3.js", "Three.js", "WebGL", "WebAssembly",
@@ -50,7 +50,7 @@ export function extractExperienceFromText(text) {
       return { min, max };
     }
   }
-  return { min: 0, max: 99 };
+  return null;
 }
 
 /**
@@ -67,9 +67,92 @@ export function extractLocationFromText(text) {
 }
 
 /**
- * Calculate skill match score between JD required skills and candidate skills
- * Returns: 0–100
+ * Detect if a role/title keyword is present in the JD text
  */
+export function detectRoleFromText(text) {
+  const roleKeywords = [
+    "developer", "engineer", "designer", "architect", "analyst", "manager",
+    "lead", "scientist", "devops", "qa", "tester", "consultant", "specialist",
+    "frontend", "backend", "fullstack", "full stack", "mobile", "cloud",
+    "data", "product", "security", "sre", "ml", "ai", "software",
+  ];
+  const text_lower = text.toLowerCase();
+  return roleKeywords.find((kw) => text_lower.includes(kw)) || null;
+}
+
+// ─────────────────────────────────────────────
+// JD Validation & Confidence Scoring
+// ─────────────────────────────────────────────
+
+/**
+ * Validate a parsed JD and return a confidence score + validation state.
+ *
+ * Returns:
+ * {
+ *   isValid: boolean,        // false = block, true = proceed
+ *   confidence: number,      // 0–100
+ *   state: "good" | "partial" | "invalid",
+ *   missingFields: string[], // what's missing
+ *   message: string,         // user-facing message
+ * }
+ */
+export function validateJD(parsed, rawText) {
+  const skills = parsed?.skills || extractSkillsFromText(rawText);
+  const experience = parsed?.experience || extractExperienceFromText(rawText);
+  const role = parsed?.title || detectRoleFromText(rawText);
+
+  const skillsDetected = skills.length > 0;
+  const experienceDetected = experience !== null && experience?.min !== undefined;
+  const roleDetected = !!role;
+
+  // Confidence formula
+  const confidence = Math.round(
+    (skillsDetected ? 50 : 0) +
+    (experienceDetected ? 30 : 0) +
+    (roleDetected ? 20 : 0)
+  );
+
+  const missingFields = [];
+  if (!skillsDetected) missingFields.push("Required skills (e.g. React, Python, AWS)");
+  if (!experienceDetected) missingFields.push("Experience level (e.g. 3+ years)");
+  if (!roleDetected) missingFields.push("Role or job title");
+
+  // ── Case 1: Completely invalid ─────────────────
+  if (confidence === 0) {
+    return {
+      isValid: false,
+      confidence,
+      state: "invalid",
+      missingFields,
+      message: "Unable to extract meaningful requirements from the job description.",
+    };
+  }
+
+  // ── Case 2: Partial info ───────────────────────
+  if (confidence < 70) {
+    return {
+      isValid: true,
+      confidence,
+      state: "partial",
+      missingFields,
+      message: "Limited information detected. Results may be less accurate.",
+    };
+  }
+
+  // ── Case 3: Good JD ───────────────────────────
+  return {
+    isValid: true,
+    confidence,
+    state: "good",
+    missingFields: [],
+    message: "Job description looks good. Matching candidates now.",
+  };
+}
+
+// ─────────────────────────────────────────────
+// Match & Rank Scoring
+// ─────────────────────────────────────────────
+
 export function calculateSkillMatchScore(requiredSkills, candidateSkills) {
   if (!requiredSkills || requiredSkills.length === 0) return 50;
   const candidateLower = candidateSkills.map((s) => s.toLowerCase());
@@ -79,34 +162,25 @@ export function calculateSkillMatchScore(requiredSkills, candidateSkills) {
   return Math.round((matched.length / requiredSkills.length) * 100);
 }
 
-/**
- * Calculate experience match score
- * Returns: 0–100
- */
 export function calculateExperienceScore(required, candidateYears) {
+  if (!required || required.min === undefined) return 70;
   const { min, max } = required;
   if (candidateYears >= min && candidateYears <= max) return 100;
   if (candidateYears < min) {
     const gap = min - candidateYears;
     return Math.max(0, 100 - gap * 20);
   }
-  // Over-qualified — still decent but slight dip
   const overage = candidateYears - max;
   return Math.max(60, 100 - overage * 5);
 }
 
-/**
- * Calculate location match score
- * Returns: 0–100
- */
 export function calculateLocationScore(preferredLocation, candidateLocation) {
-  if (!preferredLocation) return 80; // No preference = almost full score
+  if (!preferredLocation) return 80;
   if (!candidateLocation) return 60;
   const pref = preferredLocation.toLowerCase();
   const cand = candidateLocation.toLowerCase();
   if (cand === "remote" || pref === "remote" || pref === "anywhere") return 90;
   if (cand === pref) return 100;
-  // Same region fuzzy match
   const regionGroups = [
     ["bangalore", "bengaluru", "mysore"],
     ["mumbai", "pune", "thane"],
@@ -121,30 +195,16 @@ export function calculateLocationScore(preferredLocation, candidateLocation) {
   return 30;
 }
 
-/**
- * Final Match Score = 0.6 × Skill + 0.3 × Experience + 0.1 × Location
- */
 export function calculateMatchScore(skillScore, expScore, locScore) {
   return Math.round(0.6 * skillScore + 0.3 * expScore + 0.1 * locScore);
 }
 
-/**
- * Final Rank Score = 0.7 × Match + 0.3 × Interest
- */
 export function calculateRankScore(matchScore, interestScore) {
   return Math.round(0.7 * matchScore + 0.3 * interestScore);
 }
 
-/**
- * Build explainability text for why a candidate was selected
- */
 export function buildExplanation(
-  requiredSkills,
-  candidateSkills,
-  expRequired,
-  candidateExp,
-  matchScore,
-  locationMatch
+  requiredSkills, candidateSkills, expRequired, candidateExp, matchScore, locationMatch
 ) {
   const candidateLower = candidateSkills.map((s) => s.toLowerCase());
   const matched = requiredSkills.filter((s) =>
@@ -158,22 +218,15 @@ export function buildExplanation(
 
   if (requiredSkills.length > 0) {
     lines.push(
-      `Matched ${matched.length}/${requiredSkills.length} required skill${
-        requiredSkills.length > 1 ? "s" : ""
-      }${matched.length > 0 ? ` (${matched.slice(0, 3).join(", ")})` : ""}`
+      `Matched ${matched.length}/${requiredSkills.length} required skill${requiredSkills.length > 1 ? "s" : ""}${matched.length > 0 ? ` (${matched.slice(0, 3).join(", ")})` : ""}`
     );
   }
 
-  const { min } = expRequired;
-  if (min > 0) {
-    if (candidateExp >= min) {
-      lines.push(
-        `Experience aligns (${candidateExp} yrs vs required ${min}+)`
-      );
+  if (expRequired && expRequired.min > 0) {
+    if (candidateExp >= expRequired.min) {
+      lines.push(`Experience aligns (${candidateExp} yrs vs required ${expRequired.min}+)`);
     } else {
-      lines.push(
-        `Slightly under-experienced (${candidateExp} yrs vs required ${min}+)`
-      );
+      lines.push(`Slightly under-experienced (${candidateExp} yrs vs required ${expRequired.min}+)`);
     }
   }
 
@@ -188,9 +241,6 @@ export function buildExplanation(
   return lines;
 }
 
-/**
- * Map interest level string to a numeric score
- */
 export function interestLevelToScore(level) {
   const map = {
     High: 88,
@@ -202,10 +252,6 @@ export function interestLevelToScore(level) {
   return map[level] ?? 50;
 }
 
-/**
- * Get interest signal based on candidate availability
- * Used as a fallback / first-pass before LLM response
- */
 export function getAvailabilitySignal(availability) {
   switch (availability) {
     case "open":

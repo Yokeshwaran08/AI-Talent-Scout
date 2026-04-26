@@ -5,6 +5,7 @@ import LoadingState from "./components/LoadingState";
 import ResultsSection from "./components/ResultsSection";
 import EmptyState from "./components/EmptyState";
 import ErrorBanner from "./components/ErrorBanner";
+import JDValidationBanner from "./components/JDValidationBanner";
 import Footer from "./components/Footer";
 import { CANDIDATES } from "./data/candidates";
 import { parseJobDescription, simulateOutreach } from "./utils/api";
@@ -18,17 +19,11 @@ import {
   calculateMatchScore,
   calculateRankScore,
   buildExplanation,
-  interestLevelToScore,
+  validateJD,
 } from "./utils/scoring";
 import "./App.css";
 
-// ─── Pipeline ────────────────────────────────────────────────
-// 1. Parse JD (LLM)  → extract skills/exp/location
-// 2. Score each candidate with JS logic
-// 3. Take top-N for outreach simulation (LLM)
-// 4. Merge scores, rank, render
-
-const OUTREACH_BATCH = 15; // candidates sent through LLM outreach
+const OUTREACH_BATCH = 15;
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,11 +31,20 @@ export default function App() {
   const [results, setResults] = useState(null);
   const [jdParsed, setJdParsed] = useState(null);
   const [error, setError] = useState(null);
+  const [validation, setValidation] = useState(null);
+
+  const handleClear = useCallback(() => {
+    setResults(null);
+    setJdParsed(null);
+    setError(null);
+    setValidation(null);
+  }, []);
 
   const handleSubmit = useCallback(async (jdText) => {
     if (!jdText.trim()) return;
     setError(null);
     setResults(null);
+    setValidation(null);
     setIsLoading(true);
     setLoadStep(0);
 
@@ -50,9 +54,8 @@ export default function App() {
       try {
         parsed = await parseJobDescription(jdText);
       } catch {
-        // Fallback: use JS-based extraction
         parsed = {
-          title: "Open Role",
+          title: null,
           skills: extractSkillsFromText(jdText),
           experience: extractExperienceFromText(jdText),
           location: extractLocationFromText(jdText),
@@ -60,17 +63,28 @@ export default function App() {
         };
       }
 
-      // Ensure skills array populated
+      // Fill in any blanks with JS-based extraction
       if (!parsed.skills || parsed.skills.length === 0) {
         parsed.skills = extractSkillsFromText(jdText);
       }
       if (!parsed.experience || parsed.experience.min === undefined) {
         parsed.experience = extractExperienceFromText(jdText);
       }
+
+      // ── Step 2: Validate the JD ───────────────────────────
+      const jdValidation = validateJD(parsed, jdText);
+      setValidation(jdValidation);
+
+      // ── BLOCK: Invalid JD — stop here ─────────────────────
+      if (!jdValidation.isValid) {
+        setIsLoading(false);
+        return;
+      }
+
       setJdParsed(parsed);
       setLoadStep(1);
 
-      // ── Step 2: Score all candidates ──────────────────────
+      // ── Step 3: Score all candidates ──────────────────────
       const scored = CANDIDATES.map((c) => {
         const skillScore = calculateSkillMatchScore(parsed.skills, c.skills);
         const expScore = calculateExperienceScore(parsed.experience, c.experience);
@@ -82,20 +96,18 @@ export default function App() {
         return { ...c, skillScore, expScore, locScore, matchScore, explanation };
       });
 
-      // Sort by match score, take top candidates for outreach
-      const sorted = [...scored].sort((a, b) => b.matchScore - a.matchScore);
-      const topCandidates = sorted.slice(0, OUTREACH_BATCH);
-      const rest = sorted.slice(OUTREACH_BATCH);
+      const sortedByMatch = [...scored].sort((a, b) => b.matchScore - a.matchScore);
+      const topCandidates = sortedByMatch.slice(0, OUTREACH_BATCH);
+      const rest = sortedByMatch.slice(OUTREACH_BATCH);
       setLoadStep(2);
 
-      // ── Step 3: Simulate outreach for top candidates ──────
+      // ── Step 4: Simulate outreach for top candidates ──────
       const outreachResults = await Promise.allSettled(
         topCandidates.map((c) => simulateOutreach(c, parsed))
       );
 
       setLoadStep(3);
 
-      // Merge outreach into candidates
       const enrichedTop = topCandidates.map((c, i) => {
         const result = outreachResults[i];
         if (result.status === "fulfilled") {
@@ -110,7 +122,6 @@ export default function App() {
             rankScore: calculateRankScore(c.matchScore, score),
           };
         }
-        // Fallback interest
         const fallbackScore = c.matchScore > 70 ? 75 : c.matchScore > 50 ? 55 : 30;
         return {
           ...c,
@@ -123,15 +134,21 @@ export default function App() {
         };
       });
 
-      // For rest (below OUTREACH_BATCH), apply quick interest estimate without LLM
       const enrichedRest = rest.map((c) => {
         const availMap = { open: 82, passive: 55, conditional: 68, not_looking: 18 };
         const interestScore = availMap[c.availability] ?? 50;
-        const interestLevel = interestScore > 75 ? "High" : interestScore > 60 ? "Medium-High" : interestScore > 45 ? "Medium" : interestScore > 30 ? "Medium-Low" : "Low";
+        const interestLevel =
+          interestScore > 75 ? "High" :
+          interestScore > 60 ? "Medium-High" :
+          interestScore > 45 ? "Medium" :
+          interestScore > 30 ? "Medium-Low" : "Low";
         return {
           ...c,
           outreach: `Hi ${c.name}, we found your profile relevant for an exciting opportunity.`,
-          response: interestLevel === "High" ? "Hi, this sounds interesting! I'd love to hear more." : interestLevel === "Low" ? "Hi, I appreciate the outreach but I'm not considering a switch right now." : "Hi, thanks for reaching out. I'm open to hearing more details.",
+          response:
+            interestLevel === "High" ? "Hi, this sounds interesting! I'd love to hear more." :
+            interestLevel === "Low" ? "Hi, I appreciate the outreach but I'm not considering a switch right now." :
+            "Hi, thanks for reaching out. I'm open to hearing more details.",
           interestLevel,
           interestScore,
           reason: "Estimated from availability signals.",
@@ -140,8 +157,6 @@ export default function App() {
       });
 
       const all = [...enrichedTop, ...enrichedRest].sort((a, b) => b.rankScore - a.rankScore);
-
-      // Only show candidates with meaningful match score
       const finalResults = all.filter((c) => c.matchScore >= 10);
 
       setResults(finalResults.length > 0 ? finalResults : null);
@@ -152,7 +167,6 @@ export default function App() {
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Showing fallback results.");
-      // Show all candidates with basic scores
       const fallback = CANDIDATES.map((c) => ({
         ...c,
         matchScore: Math.floor(Math.random() * 40 + 30),
@@ -176,7 +190,14 @@ export default function App() {
       <Header />
 
       <main className="app-main">
-        <JDInput onSubmit={handleSubmit} isLoading={isLoading} />
+        <JDInput onSubmit={handleSubmit} isLoading={isLoading} onClear={handleClear} />
+
+        {/* JD Validation Banner — shown after every submit */}
+        {validation && !isLoading && (
+          <div className="container-narrow">
+            <JDValidationBanner validation={validation} />
+          </div>
+        )}
 
         {error && (
           <div className="container-narrow">
@@ -187,10 +208,23 @@ export default function App() {
         {isLoading && <LoadingState currentStep={loadStep} />}
 
         {!isLoading && results && (
-          <ResultsSection candidates={results} jdParsed={jdParsed} />
+          <ResultsSection candidates={results} jdParsed={jdParsed} validation={validation} />
         )}
 
-        {!isLoading && !results && !error && <EmptyState />}
+        {/* Invalid JD empty state */}
+        {!isLoading && !results && validation?.state === "invalid" && (
+          <div className="invalid-jd-empty">
+            <span className="invalid-jd-emoji">🚫</span>
+            <h3>No candidates generated</h3>
+            <p>Reason:</p>
+            <ul>
+              {validation.missingFields.map((f, i) => <li key={i}>{f}</li>)}
+            </ul>
+            <p className="invalid-jd-tip">👉 Try improving the job description and searching again.</p>
+          </div>
+        )}
+
+        {!isLoading && !results && !error && !validation && <EmptyState />}
       </main>
 
       <Footer />
