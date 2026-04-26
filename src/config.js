@@ -10,16 +10,33 @@ export const CONFIG = {
   INTEREST_WEIGHT: 0.3,
 
   // Pipeline limits
-  TOP_LLM_LIMIT: 10,       // candidates sent to LLM for outreach simulation
-  INITIAL_RENDER: 10,       // cards shown on first render
-  MIN_MATCH_SCORE: 10,      // candidates below this are excluded from results
+  TOP_LLM_LIMIT: 10,
+  INITIAL_RENDER: 10,
+  MIN_MATCH_SCORE: 10,
 
   // OpenAI
   MODEL: "gpt-4o-mini",
   MAX_TOKENS_PARSE: 600,
   MAX_TOKENS_OUTREACH: 400,
 
+  // LLM timeout (ms) — aborts fetch if no response within this time
+  LLM_TIMEOUT_MS: 8000,
+
   // Confidence thresholds
   CONFIDENCE_GOOD: 70,
   CONFIDENCE_INVALID: 0,
+
+  // Fallback defaults used when any pipeline step fails
+  FALLBACK: {
+    MATCH_SCORE: 40,
+    SKILL_SCORE: 40,
+    EXP_SCORE: 70,
+    LOC_SCORE: 80,
+    INTEREST_SCORE: 50,
+    INTEREST_LEVEL: "Medium",
+    OUTREACH: (name) => `Hi ${name}, we have an opportunity that matches your profile.`,
+    RESPONSE: "Thanks for reaching out. I'd be happy to learn more.",
+    REASON: "Estimated (API unavailable)",
+    INTEREST_REASONS: ["Score estimated due to API issue"],
+  },
 };
