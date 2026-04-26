@@ -12,7 +12,7 @@ The ideal candidate should have:
 
 Nice to have: Next.js, performance optimization, design systems.`;
 
-export default function JDInput({ onSubmit, isLoading, onClear }) {
+export default function JDInput({ onSubmit, isLoading }) {
   const [jd, setJd] = useState("");
 
   const handleSubmit = () => {
@@ -21,11 +21,6 @@ export default function JDInput({ onSubmit, isLoading, onClear }) {
   };
 
   const handleSample = () => setJd(SAMPLE_JD);
-
-  const handleChange = (e) => {
-    setJd(e.target.value);
-    if (!e.target.value.trim()) onClear();
-  };
 
   return (
     <section className="jd-section">
@@ -42,7 +37,7 @@ export default function JDInput({ onSubmit, isLoading, onClear }) {
           className="jd-textarea"
           placeholder="Paste job description here (skills, experience, location…)"
           value={jd}
-          onChange={handleChange}
+          onChange={(e) => setJd(e.target.value)}
           rows={10}
           disabled={isLoading}
         />

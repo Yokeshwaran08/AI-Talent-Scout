@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CandidateCard from "./CandidateCard";
-import "./ResultsSection.css";
+import "./ResultsList.css";
 
 const SORT_OPTIONS = [
   { value: "rank", label: "Overall Rank" },
@@ -8,9 +8,9 @@ const SORT_OPTIONS = [
   { value: "interest", label: "Interest Score" },
 ];
 
-const INTEREST_FILTER = ["All", "High", "Medium-High", "Medium", "Medium-Low", "Low"];
+const INTEREST_FILTER = ["All", "High", "Medium-High", "Medium", "Low"];
 
-export default function ResultsSection({ candidates, jdParsed }) {
+export default function ResultsList({ candidates, jdParsed, validation }) {
   const [sortBy, setSortBy] = useState("rank");
   const [filterInterest, setFilterInterest] = useState("All");
   const [showCount, setShowCount] = useState(10);
@@ -20,9 +20,9 @@ export default function ResultsSection({ candidates, jdParsed }) {
   );
 
   const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === "rank") return b.rankScore - a.rankScore;
-    if (sortBy === "match") return b.matchScore - a.matchScore;
-    if (sortBy === "interest") return b.interestScore - a.interestScore;
+    if (sortBy === "rank") return (b.rankScore ?? 0) - (a.rankScore ?? 0);
+    if (sortBy === "match") return (b.matchScore ?? 0) - (a.matchScore ?? 0);
+    if (sortBy === "interest") return (b.interestScore ?? 0) - (a.interestScore ?? 0);
     return 0;
   });
 
@@ -31,7 +31,6 @@ export default function ResultsSection({ candidates, jdParsed }) {
 
   return (
     <section className="results-section">
-      {/* Section title */}
       <div className="results-header">
         <div>
           <h2 className="results-title">🎯 Top Matching Candidates</h2>
@@ -40,13 +39,16 @@ export default function ResultsSection({ candidates, jdParsed }) {
           </p>
         </div>
         {jdParsed?.title && (
-          <div className="jd-parsed-tag">
-            <span>Role:</span> {jdParsed.title}
-          </div>
+          <div className="jd-parsed-tag"><span>Role:</span> {jdParsed.title}</div>
         )}
       </div>
 
-      {/* Controls */}
+      {validation?.state === "partial" && (
+        <div className="partial-warning">
+          ⚠️ Low-confidence results — limited JD info detected. Results based on partial matching.
+        </div>
+      )}
+
       <div className="controls-bar">
         <div className="control-group">
           <span className="control-label">Sort by</span>
@@ -55,7 +57,7 @@ export default function ResultsSection({ candidates, jdParsed }) {
               <button
                 key={opt.value}
                 className={`sort-btn ${sortBy === opt.value ? "active" : ""}`}
-                onClick={() => setSortBy(opt.value)}
+                onClick={() => { setSortBy(opt.value); setShowCount(10); }}
               >
                 {opt.label}
               </button>
@@ -67,22 +69,22 @@ export default function ResultsSection({ candidates, jdParsed }) {
           <select
             className="filter-select"
             value={filterInterest}
-            onChange={(e) => setFilterInterest(e.target.value)}
+            onChange={(e) => { setFilterInterest(e.target.value); setShowCount(10); }}
           >
-            {INTEREST_FILTER.map((f) => (
-              <option key={f} value={f}>{f}</option>
-            ))}
+            {INTEREST_FILTER.map((f) => <option key={f} value={f}>{f}</option>)}
           </select>
         </div>
       </div>
 
-      {/* Stats row */}
       <div className="stats-row">
         {["High", "Medium-High", "Medium", "Low"].map((level) => {
-          const count = candidates.filter((c) => c.interestLevel === level || (level === "Low" && ["Low","Medium-Low"].includes(c.interestLevel))).length;
+          const count = candidates.filter((c) => c.interestLevel === level ||
+            (level === "Low" && ["Low", "Medium-Low"].includes(c.interestLevel))
+          ).length;
           const colors = { High: "#22c55e", "Medium-High": "#84cc16", Medium: "#f59e0b", Low: "#ef4444" };
           return (
-            <div key={level} className="stat-chip" style={{ borderColor: `${colors[level]}33`, background: `${colors[level]}0d` }}>
+            <div key={level} className="stat-chip"
+              style={{ borderColor: `${colors[level]}33`, background: `${colors[level]}0d` }}>
               <span style={{ color: colors[level] }}>{count}</span>
               <span className="stat-label">{level}</span>
             </div>
@@ -90,27 +92,19 @@ export default function ResultsSection({ candidates, jdParsed }) {
         })}
       </div>
 
-      {/* Empty state */}
       {visible.length === 0 && (
         <div className="empty-results">
           <p>😔 No candidates match the current filter.</p>
-          <button onClick={() => setFilterInterest("All")}>Clear Filter</button>
+          <button onClick={() => { setFilterInterest("All"); setShowCount(10); }}>Clear Filter</button>
         </div>
       )}
 
-      {/* Cards */}
-      <div className="cards-list">
+      <div className="cards-list" key={sortBy + filterInterest}>
         {visible.map((candidate, i) => (
-          <CandidateCard
-            key={candidate.id}
-            candidate={candidate}
-            rank={i + 1}
-            requiredSkills={requiredSkills}
-          />
+          <CandidateCard key={candidate.id} candidate={candidate} rank={i + 1} requiredSkills={requiredSkills} />
         ))}
       </div>
 
-      {/* Load more */}
       {sorted.length > showCount && (
         <div className="load-more-wrap">
           <button className="btn-load-more" onClick={() => setShowCount((n) => n + 10)}>

@@ -12,10 +12,7 @@ const INTEREST_CONFIG = {
 function ScoreBar({ value, color }) {
   return (
     <div className="score-bar-track">
-      <div
-        className="score-bar-fill"
-        style={{ width: `${value}%`, background: color }}
-      />
+      <div className="score-bar-fill" style={{ width: `${value}%`, background: color }} />
     </div>
   );
 }
@@ -27,23 +24,20 @@ export default function CandidateCard({ candidate, rank, requiredSkills = [] }) 
   const {
     name, role, skills, experience, location, currentCompany,
     matchScore, interestScore, rankScore,
-    interestLevel, outreach, response, reason, explanation,
+    interestLevel, outreach, response, reason, interestReasons,
+    explanation, insight,
   } = candidate;
 
   const interest = INTEREST_CONFIG[interestLevel] || INTEREST_CONFIG["Medium"];
-  const candidateLower = skills.map((s) => s.toLowerCase());
-  const req = requiredSkills.map((s) => s.toLowerCase());
+  const exp = explanation || {};
 
   return (
-    <article className={`cand-card ${shortlisted ? "shortlisted" : ""}`} style={{ animationDelay: `${rank * 0.07}s` }}>
-      {/* Rank badge */}
+    <article className={`cand-card ${shortlisted ? "shortlisted" : ""}`} style={{ animationDelay: `${rank * 0.06}s` }}>
       <div className="rank-badge">#{rank}</div>
 
       {/* Header */}
       <div className="cand-header">
-        <div className="cand-avatar" data-initials={name.split(" ").map(n=>n[0]).join("").slice(0,2)}>
-          {name.split(" ").map(n=>n[0]).join("").slice(0,2)}
-        </div>
+        <div className="cand-avatar">{name.split(" ").map(n => n[0]).join("").slice(0, 2)}</div>
         <div className="cand-meta">
           <h3 className="cand-name">{name}</h3>
           <p className="cand-role">{role}</p>
@@ -77,36 +71,62 @@ export default function CandidateCard({ candidate, rank, requiredSkills = [] }) 
         </div>
       </div>
 
+      {/* Match Breakdown */}
+      <div className="breakdown-section">
+        <div className="section-label">🧠 Match Breakdown</div>
+        <div className="breakdown-grid">
+          <div className="breakdown-item">
+            <span className="bd-key">Skills Match</span>
+            <span className="bd-val">
+              {exp.matchedCount ?? "—"}/{exp.totalRequired ?? "—"}
+              {exp.skillMatchPct != null ? ` (${exp.skillMatchPct}%)` : ""}
+            </span>
+          </div>
+          <div className="breakdown-item">
+            <span className="bd-key">Experience Fit</span>
+            <span className={`bd-val ${exp.experienceMatch === "Strong" ? "good" : exp.experienceMatch?.startsWith("Under") ? "warn" : ""}`}>
+              {exp.experienceMatch ?? "—"}
+            </span>
+          </div>
+          <div className="breakdown-item">
+            <span className="bd-key">Location Fit</span>
+            <span className={`bd-val ${exp.locationFit === "Exact Match" ? "good" : exp.locationFit === "Different City" ? "warn" : ""}`}>
+              {exp.locationFit ?? "—"}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Skills */}
       <div className="skills-section">
         <div className="section-label">📊 Skills</div>
         <div className="skills-chips">
-          {skills.map((skill) => {
-            const matched = req.length === 0 || req.includes(skill.toLowerCase());
+          {skills.map((skill, i) => {
+            const req = requiredSkills.map(s => s.toLowerCase());
+            const matched = req.length > 0 && req.includes(skill.toLowerCase());
             return (
-              <span key={skill} className={`skill-chip ${matched && req.length > 0 ? "matched" : ""} ${!matched && req.length > 0 ? "missing" : ""}`}>
-                {req.length > 0 && (req.includes(skill.toLowerCase()) ? "✔ " : "")}
-                {skill}
+              <span key={`${skill}-${i}`} className={`skill-chip ${matched ? "matched" : ""}`}>
+                {matched ? "✔ " : ""}{skill}
               </span>
             );
           })}
-          {req.filter(r => !candidateLower.includes(r)).map(r => (
-            <span key={r} className="skill-chip not-present">✖ {requiredSkills.find(s=>s.toLowerCase()===r) || r}</span>
-          ))}
+          {requiredSkills
+            .filter(r => !skills.map(s => s.toLowerCase()).includes(r.toLowerCase()))
+            .map((r, i) => (
+              <span key={`missing-${i}`} className="skill-chip not-present">✖ {r}</span>
+            ))}
         </div>
       </div>
 
-      {/* Why selected */}
-      {explanation && explanation.length > 0 && (
-        <div className="why-section">
-          <div className="section-label">📝 Why Selected</div>
-          <ul className="why-list">
-            {explanation.map((line, i) => <li key={i}>{line}</li>)}
-          </ul>
+      {/* Recruiter Insight */}
+      {insight && (
+        <div className="insight-section">
+          <div className="section-label">💡 Recruiter Insight</div>
+          <p className="insight-text">{insight}</p>
         </div>
       )}
 
-      {/* Expandable: Outreach */}
+      {/* Expanded: Outreach + Interest Reasons */}
       {expanded && (
         <div className="outreach-section">
           <div className="section-label">💬 AI Outreach</div>
@@ -118,9 +138,18 @@ export default function CandidateCard({ candidate, rank, requiredSkills = [] }) 
             <span className="bubble-label">{name.split(" ")[0]}</span>
             <p>"{response}"</p>
           </div>
-          <div className="interest-reason" style={{ background: interest.bg, borderColor: interest.color }}>
-            <strong style={{ color: interest.color }}>{interest.emoji} {interestLevel} Interest</strong>
-            <span> — {reason}</span>
+
+          {/* Why this interest score */}
+          <div className="interest-why" style={{ background: interest.bg, borderColor: interest.color }}>
+            <div className="iw-header">
+              <strong style={{ color: interest.color }}>{interest.emoji} {interestLevel} Interest</strong>
+            </div>
+            <div className="iw-reason-label">Reason:</div>
+            <ul className="iw-reasons">
+              {(interestReasons && interestReasons.length > 0 ? interestReasons : [reason]).map((r, i) => (
+                <li key={i}>{r}</li>
+              ))}
+            </ul>
           </div>
         </div>
       )}

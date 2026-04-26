@@ -29,3 +29,11 @@
 }
 
 .error-dismiss:hover { background: rgba(239,68,68,0.1); }
+
+.error-banner.warning {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.25);
+  color: #fbbf24;
+}
+
+.error-banner.warning .error-dismiss { color: #f59e0b; }
