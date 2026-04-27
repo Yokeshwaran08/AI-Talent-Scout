@@ -136,6 +136,39 @@ AI Talent Scout automates the workflow by:
 
 ---
 
+## 📥📤 Sample Input & Output
+
+### 📥 Input (Job Description)
+Frontend Developer with React, JavaScript, 2–4 years experience, Chennai or Remote.
+
+---
+
+### 📤 Output (Top Candidates)
+
+1. **Rahul Sharma**  
+   - Match Score: 82%  
+   - Interest: High  
+   - Insight: Strong skill alignment and actively exploring opportunities  
+
+2. **Priya Nair**  
+   - Match Score: 78%  
+   - Interest: Medium-High  
+   - Insight: Good match, but evaluating multiple roles  
+
+3. **Karthik R**  
+   - Match Score: 74%  
+   - Interest: Medium  
+   - Insight: Open depending on role flexibility  
+
+---
+
+Each candidate includes:
+- Match breakdown (skills, experience, location)
+- AI-generated interest simulation
+- Explainability insights for decision-making
+
+---
+
 📸 Screenshots
 
 🏠 Input & Validation
