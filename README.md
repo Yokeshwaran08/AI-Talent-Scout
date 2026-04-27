@@ -162,16 +162,14 @@ Frontend Developer with React, JavaScript, 2–4 years experience, Chennai or Re
 
 ---
 
-Each candidate includes:
+### Each candidate includes:
 - Match breakdown (skills, experience, location)
 - AI-generated interest simulation
 - Explainability insights for decision-making
 
 ---
-
-📸 Screenshots
-
-🏠 Input & Validation
+## 📸 Screenshots
+###  🏠Input & Validation
 
 Paste a job description and get instant feedback on its quality.
 
@@ -180,20 +178,20 @@ Shows confidence warnings before processing
 
 ![JD Screening](./screenshots/JDresult.png)
 
-⚠️ Garbage / Invalid JD Handling
+###  ⚠️ Garbage / Invalid JD Handling
 
 Prevents misleading results when JD lacks meaningful data.
 
 ![Invalid JD](./screenshots/invalidJD.png)
 ![Partial JD](./screenshots/partialJD.png)
 
-🎯 Ranked Candidate Results
+###  🎯Ranked Candidate Results
 
 Clean, structured cards showing match score, interest level, and explanations.
 
 ![Candidate's Result](./screenshots/results.png)
 
-🧠 Explainability & Insights
+###  🧠 Explainability & Insights
 
 Each candidate includes reasoning:
 
@@ -202,7 +200,7 @@ Interest simulation explanation
 
 ![Insight and Explainability](./screenshots/insights.png)
 
-🔍 Sorting & Filtering
+###  🔍 Sorting & Filtering
 
 Recruiters can:
 
@@ -211,7 +209,7 @@ Filter candidates by interest level
 
 ![Sorting and Filtering](./screenshots/sorting.png)
 
-⏳ Processing Flow
+###  ⏳ Processing Flow
 
 Step-by-step loading state showing pipeline progress.
 
