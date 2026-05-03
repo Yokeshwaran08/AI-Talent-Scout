@@ -136,69 +136,127 @@ AI Talent Scout automates the workflow by:
 
 ---
 
-📸 Screenshots
+## 📥📤 Sample Input & Output
 
-🏠 Input & Validation
+### 📥 Input (Job Description)
+Frontend Developer with React, JavaScript, 2–4 years experience, Chennai or Remote.
+
+---
+
+### 📤 Output (Top Candidates)
+
+1. **Rahul Sharma**  
+   - Match Score: 82%  
+   - Interest: High  
+   - Insight: Strong skill alignment and actively exploring opportunities  
+
+2. **Priya Nair**  
+   - Match Score: 78%  
+   - Interest: Medium-High  
+   - Insight: Good match, but evaluating multiple roles  
+
+3. **Karthik R**  
+   - Match Score: 74%  
+   - Interest: Medium  
+   - Insight: Open depending on role flexibility  
+
+---
+
+### Each candidate includes:
+- Match breakdown (skills, experience, location)
+- AI-generated interest simulation
+- Explainability insights for decision-making
+
+---
+## 📸 Screenshots
+###  🏠Input & Validation
 
 Paste a job description and get instant feedback on its quality.
 
 Detects invalid or low-quality JDs
 Shows confidence warnings before processing
-![JD Screening](./screenshots/JDresults.png)
 
-⚠️ Garbage / Invalid JD Handling
+![JD Screening](./screenshots/JDresult.png)
+
+###  ⚠️ Garbage / Invalid JD Handling
 
 Prevents misleading results when JD lacks meaningful data.
+
 ![Invalid JD](./screenshots/invalidJD.png)
 ![Partial JD](./screenshots/partialJD.png)
 
-🎯 Ranked Candidate Results
+###  🎯Ranked Candidate Results
 
 Clean, structured cards showing match score, interest level, and explanations.
+
 ![Candidate's Result](./screenshots/results.png)
 
-🧠 Explainability & Insights
+###  🧠 Explainability & Insights
 
 Each candidate includes reasoning:
 
 Why were they selected
 Interest simulation explanation
+
 ![Insight and Explainability](./screenshots/insights.png)
 
-🔍 Sorting & Filtering
+###  🔍 Sorting & Filtering
 
 Recruiters can:
 
 Sort by rank, match score, or interest
 Filter candidates by interest level
+
 ![Sorting and Filtering](./screenshots/sorting.png)
 
-⏳ Processing Flow
+###  ⏳ Processing Flow
 
 Step-by-step loading state showing pipeline progress.
 
-![Flow](./screenshots/flow.png)
+![Flow](./screenshots/Flow.png)
 
 
 ---
 
 ## 🏗️ Architecture
 
+
+
 ```plaintext
-User Input (JD)
-        ↓
-JD Parser (LLM)
-        ↓
-Validation Layer
-        ↓
-Matching Engine (JS)
-        ↓
-Interest Simulator (LLM + fallback)
-        ↓
-Ranking Engine
-        ↓
-UI (React)
++----------------------+
+|   User Input (JD)    |
++----------+-----------+
+           ↓
++----------------------+
+|   JD Parser (LLM)    |
++----------+-----------+
+           ↓
++----------------------+
+|  Validation Layer    |
++----------+-----------+
+           ↓
++----------------------+
+| Matching Engine (JS) |
++----------+-----------+
+           ↓
++-------------------------------+
+| Interest Simulator (LLM + FB) |
++----------+--------------------+
+           ↓
++----------------------+
+|  Ranking Engine      |
++----------+-----------+
+           ↓
++----------------------+
+|   UI (React App)     |
++----------------------+
 ```
+This architecture combines AI reasoning with deterministic logic:
+
+- LLM handles **understanding and simulation** (JD parsing, interest generation)
+- JavaScript handles **scoring and ranking** (fast, reliable, and explainable)
+- Validation ensures robustness against poor or noisy job descriptions
+- Fallback logic guarantees the system continues working even if AI fails
 
 ---
 
