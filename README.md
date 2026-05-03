@@ -132,6 +132,11 @@ Designed to simulate a real recruiter workflow — not just a scoring engine.
 
 ---
 
+### 📱 Fully Responsive Experience
+Optimized for both desktop and mobile — ensuring recruiters can use it anywhere.
+
+---
+
 ## 📸 Screenshots
 
 ### 🏠 Input & Validation
