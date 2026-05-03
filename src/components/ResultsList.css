@@ -1,21 +1,21 @@
 .results-section {
   max-width: 820px;
   margin: 0 auto;
-  padding: 0 20px 80px;
+  padding: 0 16px 80px;
 }
 
 .results-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 16px;
+  margin-bottom: 20px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .results-title {
   font-family: "Syne", sans-serif;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #f1f5f9;
   margin: 0 0 4px;
@@ -23,20 +23,21 @@
 
 .results-subtitle {
   font-family: "DM Sans", sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: #64748b;
   margin: 0;
 }
 
 .jd-parsed-tag {
   font-family: "DM Sans", sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #a5b4fc;
   background: rgba(99,102,241,0.1);
   border: 1px solid rgba(99,102,241,0.2);
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 10px;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 .jd-parsed-tag span {
@@ -45,31 +46,32 @@
   margin-right: 4px;
 }
 
-/* Controls */
+/* ── Controls: stack on mobile ── */
 .controls-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
   margin-bottom: 18px;
-  flex-wrap: wrap;
 }
 
 .control-group {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .control-label {
   font-family: "DM Sans", sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   white-space: nowrap;
+  min-width: 70px;
 }
 
+/* Sort buttons — scrollable row so they never clip */
 .btn-group {
   display: flex;
   gap: 4px;
@@ -77,6 +79,9 @@
   border: 1px solid var(--border);
   padding: 3px;
   border-radius: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
 }
 
 .sort-btn {
@@ -85,11 +90,14 @@
   color: #64748b;
   font-family: "DM Sans", sans-serif;
   font-size: 12px;
-  padding: 6px 12px;
+  padding: 7px 12px;
   border-radius: 7px;
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 36px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .sort-btn.active {
@@ -108,57 +116,61 @@
   color: #94a3b8;
   font-family: "DM Sans", sans-serif;
   font-size: 13px;
-  padding: 7px 12px;
+  padding: 8px 12px;
   border-radius: 9px;
   cursor: pointer;
   outline: none;
+  flex: 1;
+  min-height: 40px;
 }
 
 .filter-select:focus {
   border-color: #6366f1;
 }
 
-/* Stats */
+/* ── Stats ── */
 .stats-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
 .stat-chip {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   border: 1px solid;
   border-radius: 10px;
-  padding: 7px 14px;
+  padding: 6px 12px;
   font-family: "Syne", sans-serif;
+  flex: 1;
+  min-width: calc(50% - 4px);
 }
 
 .stat-chip span:first-child {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   line-height: 1;
 }
 
 .stat-label {
   font-family: "DM Sans", sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
 }
 
-/* Cards */
+/* ── Cards ── */
 .cards-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
 }
 
-/* Empty */
+/* ── Empty ── */
 .empty-results {
   text-align: center;
-  padding: 60px 24px;
+  padding: 48px 24px;
   color: #64748b;
   font-family: "DM Sans", sans-serif;
 }
@@ -180,10 +192,10 @@
   background: rgba(99,102,241,0.1);
 }
 
-/* Load more */
+/* ── Load more ── */
 .load-more-wrap {
   text-align: center;
-  margin-top: 28px;
+  margin-top: 24px;
 }
 
 .btn-load-more {
@@ -196,6 +208,9 @@
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
+  max-width: 320px;
+  min-height: 44px;
 }
 
 .btn-load-more:hover {
@@ -207,9 +222,27 @@
   background: rgba(245,158,11,0.08);
   border: 1px solid rgba(245,158,11,0.25);
   border-radius: 10px;
-  padding: 10px 16px;
+  padding: 10px 14px;
   font-family: "DM Sans", sans-serif;
   font-size: 13px;
   color: #fbbf24;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+}
+
+/* ── Desktop: side-by-side controls ── */
+@media (min-width: 600px) {
+  .results-section { padding: 0 20px 80px; }
+
+  .controls-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .stat-chip {
+    min-width: unset;
+    flex: unset;
+  }
+
+  .results-title { font-size: 24px; }
 }

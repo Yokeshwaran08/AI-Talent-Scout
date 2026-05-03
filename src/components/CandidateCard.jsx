@@ -32,12 +32,23 @@ export default function CandidateCard({ candidate, rank, requiredSkills = [] }) 
   const exp = explanation || {};
 
   return (
-    <article className={`cand-card ${shortlisted ? "shortlisted" : ""}`} style={{ animationDelay: `${rank * 0.06}s` }}>
-      <div className="rank-badge">#{rank}</div>
+    <article className={`cand-card ${shortlisted ? "shortlisted" : ""}`}
+      style={{ animationDelay: `${rank * 0.06}s` }}>
 
-      {/* Header */}
+      {/* Top row: rank badge left, overall score right — no overlap */}
+      <div className="card-top-row">
+        <span className="rank-badge">#{rank}</span>
+        <div className="cand-rank-score">
+          <span className="rank-score-val">{rankScore}%</span>
+          <span className="rank-score-label">Overall</span>
+        </div>
+      </div>
+
+      {/* Header: avatar + name/role/tags */}
       <div className="cand-header">
-        <div className="cand-avatar">{name.split(" ").map(n => n[0]).join("").slice(0, 2)}</div>
+        <div className="cand-avatar">
+          {name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+        </div>
         <div className="cand-meta">
           <h3 className="cand-name">{name}</h3>
           <p className="cand-role">{role}</p>
@@ -46,10 +57,6 @@ export default function CandidateCard({ candidate, rank, requiredSkills = [] }) 
             <span className="meta-tag">💼 {experience} yr{experience !== 1 ? "s" : ""}</span>
             <span className="meta-tag">🏢 {currentCompany}</span>
           </div>
-        </div>
-        <div className="cand-rank-score">
-          <span className="rank-score-val">{rankScore}%</span>
-          <span className="rank-score-label">Overall</span>
         </div>
       </div>
 
@@ -138,8 +145,6 @@ export default function CandidateCard({ candidate, rank, requiredSkills = [] }) 
             <span className="bubble-label">{name.split(" ")[0]}</span>
             <p>"{response}"</p>
           </div>
-
-          {/* Why this interest score */}
           <div className="interest-why" style={{ background: interest.bg, borderColor: interest.color }}>
             <div className="iw-header">
               <strong style={{ color: interest.color }}>{interest.emoji} {interestLevel} Interest</strong>
