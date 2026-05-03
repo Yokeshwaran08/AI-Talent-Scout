@@ -1,26 +1,53 @@
 # ⚡ AI Talent Scout
 
-**AI-powered recruiter agent that finds, evaluates, and engages candidates from a Job Description.**
+**AI-powered recruiter agent that doesn't just find candidates — it finds the *right* ones who are actually interested.**
 
 Built for the **Deccan AI Catalyst Hackathon 🚀**
 
 ---
 
+## 🌐 Live Demo
+
+👉 https://ai-talent-scout-rho.vercel.app/
+
+---
+
+## 🧠 Why This Matters
+
+Hiring isn't just about finding qualified candidates.
+
+It's about finding candidates who:
+
+* ✔ Fit the role
+* ✔ Are genuinely interested
+* ✔ Will actually respond
+
+Most tools solve the first problem.
+**AI Talent Scout solves all three.**
+
+---
+
 ## 🧠 Problem
 
-Recruiters spend hours manually:
+Recruiters spend hours:
 
-* Filtering candidate profiles
+* Filtering profiles
 * Evaluating skill fit
-* Following up to check interest
+* Following up manually
 
-This process is **slow, inconsistent, and inefficient**.
+Despite this effort:
+
+* Many candidates never respond
+* Interest is unknown until late
+* Time is wasted on low-intent leads
+
+👉 The missing piece: **intent**
 
 ---
 
 ## 💡 Solution
 
-AI Talent Scout automates the workflow by:
+AI Talent Scout automates the recruitment workflow by:
 
 1. Parsing a Job Description
 2. Matching candidates intelligently
@@ -31,24 +58,28 @@ AI Talent Scout automates the workflow by:
    * ❤️ Interest Score (likelihood to respond)
 5. Producing a **ranked, explainable shortlist**
 
+👉 Result: A shortlist that is not just accurate — but actionable.
+
 ---
 
 ## 🚀 Key Features
 
+Designed to simulate a real recruiter workflow — not just a scoring engine.
+
 ### 🔍 Intelligent JD Parsing
 
 * Extracts skills, experience, and role context using AI
-* Handles **incomplete or noisy job descriptions**
+* Handles incomplete or noisy job descriptions
 
 ---
 
-### ⚠️ Robust Input Validation 
+### ⚠️ Robust Input Validation
 
-* Detects **garbage / low-quality JDs**
+* Detects garbage / low-quality JDs
 * Prevents misleading results
 * Shows:
 
-  * ❌ Invalid JD → no results generated
+  * ❌ Invalid JD → no results
   * ⚠️ Partial JD → low-confidence warning
 
 ---
@@ -77,33 +108,96 @@ AI Talent Scout automates the workflow by:
 
 ### 📊 Smart Ranking System
 
-* Final score combines:
+* Combines:
 
   * Match Score
   * Interest Score
-* Top candidates highlighted with:
-
-  * 💡 Recruiter insights
+* Highlights top candidates with insights
 
 ---
 
 ### 🎯 Interactive UI
 
-* Sort by:
-
-  * Rank
-  * Match Score
-  * Interest Score
+* Sort by rank, match score, or interest
 * Filter candidates by interest level
-* Progressive loading (performance-friendly)
+* Smooth, responsive experience
 
 ---
 
-### 🛡️ Fault-Tolerant Design (🔥 Engineering Strength)
+### 🛡️ Fault-Tolerant Design
 
 * Handles API failures gracefully
-* Uses fallback data if LLM fails
-* Prevents crashes and ensures smooth UX
+* Uses fallback data if AI fails
+* Prevents crashes
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Input & Validation
+
+![JD Screening](./screenshots/JDresult.png)
+
+---
+
+### ⚠️ Invalid / Partial JD Handling
+
+![Invalid JD](./screenshots/invalidJD.png)
+![Partial JD](./screenshots/partialJD.png)
+
+---
+
+### 🎯 Ranked Candidate Results
+
+![Candidate's Result](./screenshots/results.png)
+
+---
+
+### 🧠 Explainability & Insights
+
+![Insight and Explainability](./screenshots/insights.png)
+
+---
+
+### 🔍 Sorting & Filtering
+
+![Sorting and Filtering](./screenshots/sorting.png)
+
+---
+
+### ⏳ Processing Flow
+
+![Flow](./screenshots/Flow.png)
+
+---
+
+### 📱 Mobile UI — Input Experience
+
+![Flow](./screenshots/MobileUISample.png)
+
+---
+### 📱 Mobile UI — Candidate Results
+
+![Flow](./screenshots/MobileUICardResult.png)
+
+---
+
+## 🔥 What Makes This Different
+
+Most AI tools focus on prediction.
+
+This system focuses on:
+
+* ✔ Decision-making
+* ✔ Explainability
+* ✔ Recruiter usability
+
+It combines:
+
+* LLMs → understanding & simulation
+* JavaScript → scoring & reliability
+
+👉 Built like a product, not just a demo.
 
 ---
 
@@ -119,144 +213,20 @@ AI Talent Scout automates the workflow by:
 
 ## ⚙️ How It Works
 
-1. **Parse JD**
-   AI extracts structured data (skills, experience, role)
-
-2. **Validate Input**
-   Detects invalid or incomplete job descriptions
-
-3. **Match Candidates**
-   70 mock candidates scored using JS logic
-
-4. **Simulate Interest**
-   Top candidates processed with AI outreach simulation
-
-5. **Rank & Display**
-   Results sorted and rendered with explanations
-
----
-
-## 📥📤 Sample Input & Output
-
-### 📥 Input (Job Description)
-Frontend Developer with React, JavaScript, 2–4 years experience, Chennai or Remote.
-
----
-
-### 📤 Output (Top Candidates)
-
-1. **Rahul Sharma**  
-   - Match Score: 82%  
-   - Interest: High  
-   - Insight: Strong skill alignment and actively exploring opportunities  
-
-2. **Priya Nair**  
-   - Match Score: 78%  
-   - Interest: Medium-High  
-   - Insight: Good match, but evaluating multiple roles  
-
-3. **Karthik R**  
-   - Match Score: 74%  
-   - Interest: Medium  
-   - Insight: Open depending on role flexibility  
-
----
-
-### Each candidate includes:
-- Match breakdown (skills, experience, location)
-- AI-generated interest simulation
-- Explainability insights for decision-making
-
----
-## 📸 Screenshots
-###  🏠Input & Validation
-
-Paste a job description and get instant feedback on its quality.
-
-Detects invalid or low-quality JDs
-Shows confidence warnings before processing
-
-![JD Screening](./screenshots/JDresult.png)
-
-###  ⚠️ Garbage / Invalid JD Handling
-
-Prevents misleading results when JD lacks meaningful data.
-
-![Invalid JD](./screenshots/invalidJD.png)
-![Partial JD](./screenshots/partialJD.png)
-
-###  🎯Ranked Candidate Results
-
-Clean, structured cards showing match score, interest level, and explanations.
-
-![Candidate's Result](./screenshots/results.png)
-
-###  🧠 Explainability & Insights
-
-Each candidate includes reasoning:
-
-Why were they selected
-Interest simulation explanation
-
-![Insight and Explainability](./screenshots/insights.png)
-
-###  🔍 Sorting & Filtering
-
-Recruiters can:
-
-Sort by rank, match score, or interest
-Filter candidates by interest level
-
-![Sorting and Filtering](./screenshots/sorting.png)
-
-###  ⏳ Processing Flow
-
-Step-by-step loading state showing pipeline progress.
-
-![Flow](./screenshots/Flow.png)
-
+1. Parse JD → Extract structured data
+2. Validate → Detect poor input
+3. Match → Score candidates
+4. Simulate → AI generates interest
+5. Rank → Display best candidates
 
 ---
 
 ## 🏗️ Architecture
 
-
-
-```plaintext
-+----------------------+
-|   User Input (JD)    |
-+----------+-----------+
-           ↓
-+----------------------+
-|   JD Parser (LLM)    |
-+----------+-----------+
-           ↓
-+----------------------+
-|  Validation Layer    |
-+----------+-----------+
-           ↓
-+----------------------+
-| Matching Engine (JS) |
-+----------+-----------+
-           ↓
-+-------------------------------+
-| Interest Simulator (LLM + FB) |
-+----------+--------------------+
-           ↓
-+----------------------+
-|  Ranking Engine      |
-+----------+-----------+
-           ↓
-+----------------------+
-|   UI (React App)     |
-+----------------------+
 ```
-This architecture combines AI reasoning with deterministic logic:
-
-- LLM handles **understanding and simulation** (JD parsing, interest generation)
-- JavaScript handles **scoring and ranking** (fast, reliable, and explainable)
-- Validation ensures robustness against poor or noisy job descriptions
-- Fallback logic guarantees the system continues working even if AI fails
+User Input → JD Parser → Validation → Matching Engine  
+→ Interest Simulation → Ranking Engine → UI
+```
 
 ---
 
@@ -264,11 +234,11 @@ This architecture combines AI reasoning with deterministic logic:
 
 ```
 ai-talent-scout/
-├── components/        # UI components
-├── services/          # Pipeline + AI logic
-├── utils/             # Scoring + helpers
-├── data/              # Mock candidate dataset
-├── config/            # Configurable constants
+├── components/
+├── services/
+├── utils/
+├── data/
+├── config/
 ```
 
 ---
@@ -279,39 +249,39 @@ ai-talent-scout/
 
 * Node.js 18+
 * npm
-* OpenAI API key
+* OpenAI API Key
+
+---
 
 ### Install
 
-```bash
 npm install
 npm install express http-proxy-middleware cors dotenv
-```
+
+---
 
 ### Configure API
 
-```bash
-cp .env.example .env
-# Add your key
-OPENAI_API_KEY=sk-xxxx
-```
+Create `.env` file:
+
+OPENAI_API_KEY=your_key_here
+
+---
 
 ### Run
 
-```bash
 node proxy-server.js
 npm start
-```
 
 ---
 
 ## 🧪 Edge Cases Handled
 
-* ❌ Invalid JD (no skills/experience)
-* ⚠️ Partial JD (low-confidence results)
-* 🔌 API failure (fallback responses used)
+* ❌ Invalid JD
+* ⚠️ Partial JD
+* 🔌 API failure
 * 📉 No matching candidates
-* 🔄 Repeated queries (cached / optimized)
+* 🔄 Repeated queries
 
 ---
 
@@ -319,25 +289,7 @@ npm start
 
 👉 Paste a job description
 👉 Click “Find Candidates”
-👉 View ranked, explainable results instantly
-
----
-
-## 🧠 Why This Stands Out
-
-* Not just AI — **practical recruiter workflow automation**
-* Combines **logic + LLM intelligently**
-* Handles **real-world messy inputs**
-* Designed as a **usable product, not a demo**
-
----
-
-## 🎨 Tech Stack
-
-* React 18
-* OpenAI (gpt-4o-mini)
-* Express (proxy server)
-* Vanilla CSS
+👉 View ranked results instantly
 
 ---
 
@@ -345,8 +297,13 @@ npm start
 
 This project focuses on:
 
-> **Clarity, reliability, and real-world usability over complexity**
+* Real-world usability
+* Clear decision-making
+* Robust handling of messy inputs
+
+> Not just AI that works —
+> AI that recruiters can actually use.
 
 ---
 
-Built with focus, pressure, and a bit of obsession. 🚀
+Built with focus, pressure, and intent. 🚀
